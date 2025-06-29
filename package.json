@@ -1,13 +1,19 @@
 {
   "name": "anchor-init",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Scaffold a custom Solana Anchor program in seconds",
   "main": "index.js",
   "bin": {
     "anchor-init": "./bin/cli.js"
   },
-  "keywords": ["solana", "anchor", "scaffold", "blockchain", "web3"],
-  "author": "Your Name <your.email@example.com>",
+  "keywords": [
+    "solana",
+    "anchor",
+    "scaffold",
+    "blockchain",
+    "web3"
+  ],
+  "author": "Priyansh Patel priyanshpatel18@gmail.com",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,5 +22,11 @@
   "bugs": {
     "url": "https://github.com/priyanshpatel18/anchor-init/issues"
   },
-  "homepage": "https://github.com/priyanshpatel18/anchor-init#readme"
+  "homepage": "https://github.com/priyanshpatel18/anchor-init#readme",
+  "dependencies": {
+    "@solana/web3.js": "^1.98.2",
+    "commander": "^14.0.0",
+    "fs-extra": "^11.3.0",
+    "handlebars": "^4.7.8"
+  }
 }
