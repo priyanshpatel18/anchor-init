@@ -2,9 +2,8 @@
   <h1>anchor-init</h1>
   <p>Scaffold a custom Solana Anchor program in seconds</p>
   
-  <a class="header-badge" target="_blank" href="https://github.com/priyanshpatel18">
-    <img alt="GitHub" src="https://img.shields.io/badge/@priyanshpatel18-000000?style=for-the-badge&logo=github&logoColor=white">
-  </a>
+  <a class="header-badge" target="_blank" href="https://twitter.com/priyansh_ptl18"> <img alt="Twitter" src="https://img.shields.io/badge/@priyansh_ptl18-000000?style=for-the-badge&logo=x&logoColor=white"> </a> </div>
+
 </div>
 
 ## About
