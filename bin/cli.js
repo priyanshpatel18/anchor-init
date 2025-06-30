@@ -6,6 +6,7 @@ const path = require("path");
 const { spawn } = require("child_process");
 const handlebars = require("handlebars");
 const web3 = require("@solana/web3.js");
+const { snakeCase } = require("change-case");
 
 const program = new Command();
 
@@ -23,6 +24,17 @@ program
   .description("Create a custom Anchor program template")
   .argument("<project-name>", "Name of your Anchor program")
   .action(async (projectName) => {
+    const originalName = projectName;
+    projectName = snakeCase(projectName);
+    if (projectName !== originalName) {
+      console.log(`ℹ️  Converted project name to snake_case: ${projectName}`);
+    }
+    if (!/^[a-z][a-z0-9_]*$/.test(projectName)) {
+      console.error('❌ Invalid project name. Must be snake_case, start with a letter, and contain only lowercase letters, numbers, and underscores.');
+      process.exit(1);
+    }
+
+
     const targetDir = path.join(process.cwd(), projectName);
     const templateDir = path.join(__dirname, "../templates");
 
