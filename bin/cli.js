@@ -7,6 +7,7 @@ const { spawn } = require("child_process");
 const handlebars = require("handlebars");
 const web3 = require("@solana/web3.js");
 const { snakeCase } = require("change-case");
+const inquirer = require("inquirer");
 
 const program = new Command();
 
@@ -63,6 +64,25 @@ program
     }
 
     await showNextSteps(projectName);
+    const { initGit } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "initGit",
+        message: "Initialize a Git repository?",
+        default: true
+      }
+    ]);
+
+    if (initGit) {
+      try {
+        await runCommand("git init", targetDir);
+        await runCommand("git add .", targetDir);
+        await runCommand(`git commit -m "Initial commit for ${projectName}"`, targetDir);
+        console.log("✅ Git repository initialized.");
+      } catch (err) {
+        console.error(`❌ Git initialization failed:\n${err.message}`);
+      }
+    }
   });
 
 program.parse();
@@ -79,33 +99,16 @@ async function runCommand(command, cwd) {
   });
 }
 
-async function showNextSteps(projectName) {
-  const commands = [
-    `cd ${projectName}`,
-    "anchor keys sync",
-    "anchor build",
-    "yarn",
-    "yarn deploy:local",
-    "yarn test:local"
-  ];
-
-  console.log(`\n🚀 Project created at ./${projectName}`);
-  console.log(`\n🛠️ Next steps:\n`);
-
-  for (const cmd of commands) {
-    console.log(`  $ ${cmd}`);
-  }
-
-  console.log(`\n🎉 You're all set!`);
-}
-
 async function copyTemplates(src, dest, context) {
   const entries = await fs.readdir(src, { withFileTypes: true });
 
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
-    let compiledName = handlebars.compile(entry.name.replace(".hbs", ""));
-    let destPath = path.join(dest, compiledName(context));
+
+    let compiledFileName = handlebars.compile(entry.name.replace(".hbs", ""));
+    compiledFileName = compiledFileName.replace(/anchor[-_]?init/g, context.projectName);
+
+    const destPath = path.join(dest, compiledFileName);
 
     if (entry.isDirectory()) {
       await fs.mkdirp(destPath);
@@ -122,4 +125,51 @@ async function copyTemplates(src, dest, context) {
       }
     }
   }
+}
+
+async function showNextSteps(projectName) {
+  console.log(`\n🚀 Project created at ./${projectName}\n`);
+
+  const { runSteps } = await inquirer.prompt([
+    {
+      type: "checkbox",
+      name: "runSteps",
+      message: "Which steps would you like to run now?",
+      choices: [
+        { name: "🔑 anchor keys sync", value: "keys" },
+        { name: "🔧 anchor build", value: "build" },
+        { name: "📦 yarn install", value: "install" },
+        { name: "🚀 yarn deploy:local", value: "deploy" },
+        { name: "🧪 yarn test:local", value: "test" },
+      ]
+    }
+  ]);
+
+  const cwd = path.join(process.cwd(), projectName);
+
+  for (const step of runSteps) {
+    try {
+      switch (step) {
+        case "keys":
+          await runCommand("anchor keys sync", cwd);
+          break;
+        case "build":
+          await runCommand("anchor build", cwd);
+          break;
+        case "install":
+          await runCommand("yarn", cwd);
+          break;
+        case "deploy":
+          await runCommand("yarn deploy:local", cwd);
+          break;
+        case "test":
+          await runCommand("yarn test:local", cwd);
+          break;
+      }
+    } catch (err) {
+      console.error(`❌ Failed on step "${step}":\n${err.message}`);
+    }
+  }
+
+  console.log(`\n🎉 You're all set!`);
 }
