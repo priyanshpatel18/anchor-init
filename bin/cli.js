@@ -7,7 +7,7 @@ const { spawn } = require("child_process");
 const handlebars = require("handlebars");
 const web3 = require("@solana/web3.js");
 const { snakeCase } = require("change-case");
-const inquirer = require("inquirer");
+const inquirer = require("inquirer").default;
 
 const program = new Command();
 
@@ -105,8 +105,13 @@ async function copyTemplates(src, dest, context) {
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
 
-    let compiledFileName = handlebars.compile(entry.name.replace(".hbs", ""));
-    compiledFileName = compiledFileName.replace(/anchor[-_]?init/g, context.projectName);
+    const rawName = entry.name.replace(".hbs", "");
+    let compiledFileName = handlebars.compile(rawName)(context);
+
+    // Rename folder/file named "anchor_init" directly
+    if (compiledFileName === "anchor_init") {
+      compiledFileName = context.projectName;
+    }
 
     const destPath = path.join(dest, compiledFileName);
 
