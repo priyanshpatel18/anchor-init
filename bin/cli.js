@@ -108,10 +108,8 @@ async function copyTemplates(src, dest, context) {
     const rawName = entry.name.replace(".hbs", "");
     let compiledFileName = handlebars.compile(rawName)(context);
 
-    // Rename folder/file named "anchor_init" directly
-    if (compiledFileName === "anchor_init") {
-      compiledFileName = context.projectName;
-    }
+    // Rename any filename containing "anchor_init" to match the projectName
+    compiledFileName = compiledFileName.replace(/anchor_init/g, context.projectName);
 
     const destPath = path.join(dest, compiledFileName);
 
