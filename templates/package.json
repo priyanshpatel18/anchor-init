@@ -5,9 +5,11 @@
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
     "deploy:local": "anchor deploy --provider.cluster localnet",
-    "deploy:devnet": "anchor deploy --provdier.cluster devnet",
+    "deploy:devnet": "anchor deploy --provider.cluster devnet",
     "deploy:mainnet": "anchor deploy --provider.cluster mainnet",
-    "test:local": "NODE_NO_WARNINGS=1 anchor test --skip-local-validator --skip-deploy --skip-build"
+    "test:local": "NODE_NO_WARNINGS=1 anchor test --provider.cluster localnet --skip-local-validator --skip-deploy --skip-build",
+    "test:devnet": "NODE_NO_WARNINGS=1 anchor test --provider.cluster devnet --skip-local-validator --skip-deploy --skip-build",
+    "test:mainnet": "NODE_NO_WARNINGS=1 anchor test  --provider.cluster mainnet --skip-local-validator --skip-deploy --skip-build"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1"
